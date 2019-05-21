@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<?php
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/html_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/user_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/connection.php");
+
+PrintHead();
+
+session_start();
+$_SESSION['url']=$_SERVER["REQUEST_URI"];
+
+?>
+
+<body>
+<?php PrintUpper() ?>
+<?php PrintHeader(); ?>
+
+<main class="container flex">
+    <section class="small flex">
+        <?php
+        $sql = "select * from workshop
+          inner join detail_workshop on workshop.wor_id = detail_workshop.det_wor_id
+          inner  join locatie l on detail_workshop.det_loc_id = l.loc_id
+          inner join postcode p on l.loc_pos_id = p.pos_id
+          where wor_id= " .$_GET["id"];
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        //Databank-gegevens opslaan als variabelen
+        $id = $row[wor_id];
+        $wor = $row[wor_naam];
+        $wor_src = $row[wor_foto];
+        $wor_omschr = $row[wor_omschrijving];
+        $prijs= $row[det_prijs];
+        $startuur= date("H:i", strtotime($row[det_startuur]));
+        $einduur= date("H:i", strtotime($row[det_einduur]));
+        $straat= $row[loc_straat];
+        $huisnr= $row[loc_huisnr];
+        $postcode = $row[pos_postcode];
+        $gemeente = $row[pos_gemeente];
+        $datum= date("d/m/Y", strtotime($row[det_datum]));
+        print '<h2 class="align-center">'.$wor.'</h2>
+               <div id="detail" class="flex">
+                    <img src="../images/'.$wor_src.'" alt="">
+                    <div class="detailinfo flex flexC">
+                        <p><span class="fa fa-calendar-alt icoon"></span>'.$datum.'</p>
+                        <p><span class="fa fa-clock icoon"></span>'.$startuur.' - '.$einduur.' </p>
+                        <p><span class="fa fa-euro-sign icoon"></span>'.$prijs.' Euro</p>
+                        <p><span class="fa fa-map-marker-alt icoon"></span>'.$straat.' '.$huisnr.', '.$postcode.' '.$gemeente.'</p>
+                    </div>
+               </div>
+               <div id="omschrijving">
+                    <p>'.$wor_omschr.'</p>
+                    <div class="flex">';
+
+        if ( isset($_SESSION["user"]))
+        {
+            print '<button id="h4" type="button" onclick="location.href=\'http://localhost/18.12/vrije_opdracht/det/detail_save.php\';">Schrijf je in voor deze workshop!</button>';
+        } elseif ( $_POST["login"] == "Login" ) {
+            unset($_POST['login']);      //Login knop uit $_POST verwijderen
+            $hash = hash("md5", $_POST["reg_wachtwoord"]);
+            //haal de gegevens uit de databank van de persoon die inlogt
+            $sql = "SELECT * FROM registratie where reg_email=" . "'" . $_POST["reg_email"] . "'" . " and reg_wachtwoord=" . "'" . $hash . "'";
+            $result = $_SERVER['conn']->query($sql);
+            //als er een rij voldoet aan de input-log, zeg Welkom
+            if ( $result->num_rows == 1 )
+            {
+                $row = $result->fetch_assoc();
+                $_SESSION["user"] = $row;
+                header("location: http://localhost/18.12/vrije_opdracht/det/detail_save.php");
+            } // als de input niet klopt, geef het formulier + foutmelding
+            else {
+                ToonLoginForm(detlog,"schrijfin flexC", "");
+                print '<div id="schrijfinreg" class="schrijfin flex flexC">
+                                    <p class="nieuw align-center">Nieuw lid?</p>
+                                    <button type="button" onclick="location.href=\'http://localhost/18.12/vrije_opdracht/reg/registreer.php\';">Registreer</button>
+                                </div>';
+            }
+        } else {
+            print '<h4 class="align-center">Schrijf je in voor deze workshop!</h4>';
+            ToonLoginForm(detlog,"schrijfin flexC", "");
+            print '<div id="schrijfinreg" class="schrijfin flex flexC">
+                                <p class="nieuw align-center">Nieuw lid?</p>
+                                <button type="button" onclick="location.href=\'http://localhost/18.12/vrije_opdracht/reg/registreer.php\';">Registreer</button>
+                            </div>';
+        }
+
+        print '</div>
+               </div>';
+        ?>
+    </section>
+</main>
+<footer class="container flex">
+    &copy; Workshops, januari 2019
+</footer>
+
+<?php PrintScript(); ?>
+`
+</body>
+
+</html>
