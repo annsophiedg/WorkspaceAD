@@ -3,9 +3,11 @@
 
 <?php
 session_start();
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/connection.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/html_functions.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/user_functions.php");
+$changepsw = "";
+
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/connection.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/html_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/user_functions.php");
 
 PrintHead();
 
@@ -17,7 +19,7 @@ if(isset($_SESSION["user"])) {
         unset($_POST["save-change"]);
 
         foreach ($_POST as $name => $value) {
-            $sql = "update registratie set $name= '".$value."'"." where reg_id= " . $_SESSION['user']['reg_id'];
+            $sql = "update vo_registratie set $name= '".$value."'"." where reg_id= " . $_SESSION['user']['reg_id'];
             $result = $conn->query($sql);
         }
     }
@@ -26,11 +28,11 @@ if(isset($_SESSION["user"])) {
         unset($_POST["check-password"]);
         $curPsw = hash("md5", $_POST["cur-password"]);
         $newPsw = hash("md5", $_POST["new-password"]);
-        $sql = "select reg_wachtwoord from registratie where reg_id= " . $_SESSION["user"]["reg_id"];
+        $sql = "select reg_wachtwoord from vo_registratie where reg_id= " . $_SESSION["user"]["reg_id"];
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
         if ($curPsw == $row['reg_wachtwoord']) {
-            $sql = "update registratie set reg_wachtwoord = '" . $newPsw . "' where reg_id=" . $_SESSION["user"]["reg_id"];
+            $sql = "update vo_registratie set reg_wachtwoord = '" . $newPsw . "' where reg_id=" . $_SESSION["user"]["reg_id"];
             $result2 = $conn->query($sql);
             $changepsw = "<p>Uw wachtwoord werd gewijzigd</p>";
         }else{
@@ -38,8 +40,10 @@ if(isset($_SESSION["user"])) {
         }
     }
     if(isset($_POST["delete-wor"])){
-        $sql = "delete from KT_det_reg where fk_det_id= ".$_POST["delete-wor"]." and fk_reg_id=" .$_SESSION["user"]["reg_id"];
+        $sql = "delete from vo_KT_det_reg where fk_det_id= ".$_POST["delete-wor"]." and fk_reg_id=" .$_SESSION["user"]["reg_id"];
         $result3 = $conn->query($sql);}
+} else {
+    header("location:/index.php");
 }
 ?>
 
@@ -56,41 +60,44 @@ PrintHeader(); ?>
 
         <?php
 
-        $sql= "select wor_naam, wor_foto, det_datum, det_startuur, det_einduur, loc_straat, loc_huisnr, pos_postcode, pos_gemeente, det_id from KT_det_reg
-            inner join detail_workshop dw on KT_det_reg.fk_det_id = dw.det_id
-            inner join locatie l on dw.det_loc_id = l.loc_id
-            inner join postcode p on l.loc_pos_id = p.pos_id
-            inner join workshop w on dw.det_wor_id = w.wor_id
-            where fk_reg_id = " .$_SESSION["user"]["reg_id"]."
-            ORDER BY det_datum";
-        $result=$conn->query($sql);
+        if (isset($_SESSION["user"])) {
+            $sql= "select wor_naam, wor_foto, det_datum, det_startuur, det_einduur, loc_straat, loc_huisnr, pos_postcode, pos_gemeente, det_id from vo_KT_det_reg kt
+                inner join vo_detail_workshop dw on kt.fk_det_id = dw.det_id
+                inner join vo_locatie l on dw.det_loc_id = l.loc_id
+                inner join vo_postcode p on l.loc_pos_id = p.pos_id
+                inner join vo_workshop w on dw.det_wor_id = w.wor_id
+                where fk_reg_id = " .$_SESSION["user"]["reg_id"]."
+                ORDER BY det_datum";
+            $result=$conn->query($sql);
 
-        while ($row=$result->fetch_assoc()){
-            $wor_src = $row["wor_foto"];
-            $wor = $row["wor_naam"];
-            $startuur = date("H:i", strtotime($row[det_startuur]));
-            $einduur = date("H:i", strtotime($row[det_einduur]));
-            $straat = $row["loc_straat"];
-            $huisnr = $row["loc_huisnr"];
-            $postcode = $row["pos_postcode"];
-            $gemeente = $row["pos_gemeente"];
-            $datum = date("d/m/Y", strtotime($row[det_datum]));
-            $detId = $row["det_id"];
-            print'<article class="sign-up-work flex">
-                <div class="flex">
-                    <img src="../images/'.$wor_src.'" class="sign-up-img">
-                    <div class="overview-info flex flexC">
-                    <p class="work-title" style="font-weight: 500;">'.$wor.'</p>
-                    <p><span class="fa fa-calendar-alt icoon"></span>'.$datum.'</p>
-                    <p><span class="fa fa-clock icoon"></span>'.$startuur.' - '.$einduur.' </p>
-                    <p><span class="fa fa-map-marker-alt icoon"></span>'.$straat.' '.$huisnr.', '.$postcode.' '.$gemeente.'</p>
+            while ($row=$result->fetch_assoc()){
+                $wor_src = $row["wor_foto"];
+                $wor = $row["wor_naam"];
+                $startuur = date("H:i", strtotime($row["det_startuur"]));
+                $einduur = date("H:i", strtotime($row["det_einduur"]));
+                $straat = $row["loc_straat"];
+                $huisnr = $row["loc_huisnr"];
+                $postcode = $row["pos_postcode"];
+                $gemeente = $row["pos_gemeente"];
+                $datum = date("d/m/Y", strtotime($row["det_datum"]));
+                $detId = $row["det_id"];
+                print'<article class="sign-up-work flex">
+                    <div class="flex">
+                        <img src="../images/'.$wor_src.'" class="sign-up-img">
+                        <div class="overview-info flex flexC">
+                        <p class="work-title" style="font-weight: 500;">'.$wor.'</p>
+                        <p><span class="fa fa-calendar-alt icoon"></span>'.$datum.'</p>
+                        <p><span class="fa fa-clock icoon"></span>'.$startuur.' - '.$einduur.' </p>
+                        <p><span class="fa fa-map-marker-alt icoon"></span>'.$straat.' '.$huisnr.', '.$postcode.' '.$gemeente.'</p>
+                        </div>
                     </div>
-                </div>
-                <form action="profiel.php" method="post">
-                <button class="schrijfuit" type="submit" name="delete-wor" value="'.$detId.'">Schrijf uit</button>
-                </form>
-              </article>';
-        }
+                    <form action="profiel.php" method="post">
+                    <button class="schrijfuit" type="submit" name="delete-wor" value="'.$detId.'">Schrijf uit</button>
+                    </form>
+                  </article>';
+            }
+        } 
+        
 
         ?>
     </section>
@@ -104,7 +111,7 @@ PrintHeader(); ?>
 
                     <?php
 
-                    $sql= "select * from registratie 
+                    $sql= "select * from vo_registratie 
                     where reg_id='".$_SESSION["user"]["reg_id"]."'";
                     $result = $conn->query($sql);
                     $row=$result->fetch_assoc();

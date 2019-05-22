@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Vrije opdracht PHP</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../vrije_opdracht/css/style.css">
 
-    <link rel="stylesheet" href="javascript/general.js">
+    <link rel="stylesheet" href="../vrije_opdracht/javascript/general.js">
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="

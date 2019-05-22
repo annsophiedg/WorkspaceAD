@@ -6,10 +6,10 @@ function PrintHead()
     print '<head>
         <meta charset="UTF-8">
         <title>Vrije opdracht PHP</title>
-        <link rel="stylesheet" href="http://localhost/18.12/vrije_opdracht/css/style.css">
+        <link rel="stylesheet" href="/css/style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
-        <link rel="stylesheet" href="http://localhost/18.12/vrije_opdracht/javascript/general.js">
+        <link rel="stylesheet" href="/javascript/general.js">
         <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -21,7 +21,7 @@ function PrintUpper()
 {
     ?>
     <div id="info" class="container">
-        <img src="http://localhost/18.12/vrije_opdracht/images/logo.png" alt="logo">
+        <img src="/images/logo.png" alt="logo">
         <?php Login();
         if ( !isset($_SESSION["user"]))
         { print '<button id="goToLog" class="container" type="button">Login <span class="fas fa-arrow-circle-up"></span></button>'; }
@@ -44,19 +44,19 @@ function PrintNavbar()
     ?>
     <nav id="mainnav">
         <ul class="unlist container">
-            <li><a href="http://localhost/18.12/vrije_opdracht/index.php">Home</a></li>
+            <li><a href="/index.php">Home</a></li>
 
             <?php
             //opvragen categorieën
-            $sql = "SELECT * FROM categorie";
+            $sql = "SELECT * FROM vo_categorie";
             $res_cat = $_SERVER['conn']->query($sql);
 
             //<!--        for looping categorieën + link    -->
             while($row = $res_cat->fetch_assoc())
             {
-                $cat = $row[cat_naam];
-                $id = $row[cat_id];
-                print'<li><a href="http://localhost/18.12/vrije_opdracht/cat/categorie.php?id='.$id.'">' .$cat.'</a></li>';
+                $cat = $row['cat_naam'];
+                $id = $row['cat_id'];
+                print'<li><a href="/cat/categorie.php?id='.$id.'">' .$cat.'</a></li>';
             }
             ?>
 
@@ -67,28 +67,28 @@ function PrintNavbar()
 
 function PrintCategoriën() {
     //opvragen categorieën
-    $sql = "SELECT * FROM categorie";
+    $sql = "SELECT * FROM vo_categorie";
     $res_cat = $_SERVER['conn']->query($sql);
     //<!--    looping in categorielijst   -->
     while($row = $res_cat->fetch_assoc())
     {
-        $id = $row[cat_id];
-        $cat = $row[cat_naam];
-        $src = $row[cat_foto];
-        $omschr = $row[cat_omschrijving];
+        $id = $row['cat_id'];
+        $cat = $row['cat_naam'];
+        $src = $row['cat_foto'];
+        $omschr = $row['cat_omschrijving'];
         print '<figure class="categorie">
               <h3>'.$cat.'</h3>
               <img src="images/'.$src. '" alt="">
               <figcaption>
                   <p>'.$omschr.'</p>
-                  <a href="http://localhost/18.12/vrije_opdracht/cat/categorie.php?id='.$id.'">Bekijk de workshops</a>
+                  <a href="/cat/categorie.php?id='.$id.'">Bekijk de workshops</a>
               </figcaption>
         </figure>';
     }
 }
 
 function PrintWorkshopsVanCategorie() {
-    $sql = "select * from categorie where cat_id=" .$_GET["id"];
+    $sql = "select * from vo_categorie where cat_id=" .$_GET["id"];
     $result = $_SERVER['conn']->query($sql);
     $row = $result->fetch_assoc();
 
@@ -102,23 +102,23 @@ function PrintWorkshopsVanCategorie() {
         </section>';
 
     //opvragen workshop in deze categorie
-    $sql = "SELECT * FROM workshop where wor_cat_id=" .$_GET["id"];
+    $sql = "SELECT * FROM vo_workshop where wor_cat_id=" .$_GET["id"];
     $res_wor = $_SERVER['conn']->query($sql);
 
     print '<section class="flex articles">';
     //<!--    looping in workshop   -->
     while($row = $res_wor->fetch_assoc())
     {
-        $id = $row[wor_id];
-        $wor = $row[wor_naam];
-        $wor_src = $row[wor_foto];
-        $wor_omschr = $row[wor_omschrijving];
+        $id = $row['wor_id'];
+        $wor = $row['wor_naam'];
+        $wor_src = $row['wor_foto'];
+        $wor_omschr = $row['wor_omschrijving'];
         print '<div class="categorie workshop">
                 <h3>'.$wor.'</h3>
                 <figure>
                     <img src="../images/'.$wor_src. '" alt="">
                     <figcaption class="flex">
-                        <a href="http://localhost/18.12/vrije_opdracht/det/detail.php?id='.$id.'">Bekijk deze workshop...</a>
+                        <a href="/det/detail.php?id='.$id.'">Bekijk deze workshop...</a>
                     </figcaption>
                 </figure>
         </div>';
@@ -240,7 +240,7 @@ function PrintScript()
     <script src="https://cdn.jsdelivr.net/parallax.js/1.4.2/parallax.min.js"></script>
 
     <script>
-        $('.parallax-header').parallax({imageSrc: 'http://localhost/18.12/vrije_opdracht/images/achtergrond.png'});
+        $('.parallax-header').parallax({imageSrc: '/images/achtergrond.png'});
     </script>
     <?php
 }

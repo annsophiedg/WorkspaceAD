@@ -1,5 +1,5 @@
 <?php
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/connection.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/connection.php");
 
 if ( $_POST["reg_save"] )
 {
@@ -15,19 +15,19 @@ if ( $_POST["reg_save"] )
     }
 
     //update statement maken; gebruik implode()
-    $sql = "INSERT INTO registratie SET " . implode(", " , $pairs ) ;
+    $sql = "INSERT INTO vo_registratie SET " . implode(", " , $pairs ) ;
 
     //SQL uitvoeren
     if ($conn->query($sql) === TRUE) {
         //auto login na registratie
         session_start();
-        $sql_login = "SELECT * FROM registratie where reg_email='" . $_POST["reg_email"] ."'";
+        $sql_login = "SELECT * FROM vo_registratie where reg_email='" . $_POST["reg_email"] ."'";
         $res_login = $_SERVER['conn']->query($sql_login);
         $row = $res_login->fetch_assoc();
         $_SESSION["user"] = $row;
 
         if ($reg_val!="registreer") {
-            header("location:http://localhost/18.12/vrije_opdracht/det/detail.php?id=".$reg_val);
+            header("location:/det/detail.php?id=".$reg_val);
         } else {
             //na registratie terugsturen naar de laatste opgeslagen url
             header("location:" .$_SESSION['url']);

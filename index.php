@@ -2,9 +2,10 @@
 <html lang="nl">
 
 <?php
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/html_functions.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/user_functions.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/connection.php");
+
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/html_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/user_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/connection.php");
 
 PrintHead();
 

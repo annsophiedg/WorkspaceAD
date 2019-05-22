@@ -2,9 +2,9 @@
 <html lang="nl">
 
 <?php
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/html_functions.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/user_functions.php");
-require_once ( $_SERVER["DOCUMENT_ROOT"] . "/18.12/vrije_opdracht/lib/connection.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/html_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/user_functions.php");
+require_once ( $_SERVER["DOCUMENT_ROOT"] . "/lib/connection.php");
 
 PrintHead();
 
@@ -21,7 +21,7 @@ if ($_POST['reg_sign_up']) { $reg_val=$_POST['reg_sign_up']; }
 
     <div id="reglayer" class="flex">
 
-        <form id="regform" class="flex flexC" method=POST action="http://localhost/18.12/vrije_opdracht/reg/reg_save.php">
+        <form id="regform" class="flex flexC" method=POST action="/reg/reg_save.php">
 
             <fieldset class="flex flexC">
 
